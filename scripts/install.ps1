@@ -50,4 +50,4 @@ if ($path -notlike "*$installDir*") {
 
 Write-Host ""
 Write-Host "✔ bud installed successfully"
-Write-Host "Run: bud `"your task`""
+Write-Host "Run: bud setup"

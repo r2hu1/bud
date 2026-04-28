@@ -84,4 +84,4 @@ fi
 
 echo ""
 echo "✔ $BINARY_NAME installed successfully"
-echo "Run: $BINARY_NAME \"your task\""
+echo "Run: $BINARY_NAME setup"

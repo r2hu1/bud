@@ -11,33 +11,7 @@ An AI-powered CLI planner that converts natural language tasks into executable s
 - **Built-in Safety Rules** — Blocks dangerous commands like `rm -rf /`, `shutdown`, and `reboot`
 - **Interactive Setup** — Guided configuration process for API keys and provider selection
 
-## Supported AI Providers
-
-| Provider      | Model                   |
-| ------------- | ----------------------- |
-| OpenAI        | gpt-4o-mini             |
-| Anthropic     | claude-3-haiku-20240307 |
-| Google Gemini | gemini-1.5-flash        |
-| Groq          | openai/gpt-oss-20b      |
-| Mistral       | mistral-small-latest    |
-| OpenRouter    | openai/gpt-4o-mini      |
-
-## Prerequisites
-
-- [Bun](https://bun.sh) runtime (v1.3.8+)
-- API key for your chosen AI provider
-
 ## Installation
-
-### From Source
-
-Clone the repository and install dependencies:
-
-```bash
-git clone <repo-url>
-cd bud
-bun install
-```
 
 ### Quick Install (macOS / Linux)
 
@@ -66,6 +40,16 @@ Invoke-WebRequest -Uri https://raw.githubusercontent.com/r2hu1/bud/main/scripts/
 
 The binary is installed to `%USERPROFILE%\.local\bin` and added to your user PATH automatically.
 
+### From Source
+
+Clone the repository and install dependencies:
+
+```bash
+git clone <repo-url>
+cd bud
+bun install
+```
+
 ## Configuration
 
 Run the interactive setup to configure your AI provider and API key:
@@ -91,9 +75,9 @@ bud reset
 Pass a natural language description of what you want to do:
 
 ```bash
-bud "commit all my changes"
-bud "delete all .tmp files in the project"
-bud "create a new git branch called feature-xyz"
+bud commit all my changes
+bud delete all .tmp files in the project
+bud create a new git branch called feature-xyz
 ```
 
 The workflow:
