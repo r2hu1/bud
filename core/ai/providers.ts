@@ -19,7 +19,7 @@ export function getModel(provider: Provider, apiKey: string) {
   }
 
   if (provider === "anthropic") {
-    return createAnthropic({ apiKey })("claude-opus-4-5");
+    return createAnthropic({ apiKey })("claude-haiku-4-5");
   }
 
   if (provider === "gemini") {
@@ -35,7 +35,9 @@ export function getModel(provider: Provider, apiKey: string) {
   }
 
   if (provider === "openrouter") {
-    return createOpenRouter({ apiKey })("openai/gpt-4o");
+    return createOpenRouter({ apiKey })(
+      "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+    );
   }
 
   throw new Error("Invalid provider");
