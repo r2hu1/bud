@@ -8,6 +8,7 @@ import { normalizeCommands, parseCommands } from "./core/input";
 import { confirm } from "@inquirer/prompts";
 import boxen from "boxen";
 import { $ } from "bun";
+import { runCMD } from "./core/cli/run";
 
 const program = new Command();
 
@@ -49,7 +50,7 @@ program.action(async (input: string[]) => {
   for (const cmd of normalized) {
     try {
       console.log(`\n→ ${cmd}`);
-      await $`${{ raw: cmd }}`;
+      await runCMD(cmd);
     } catch (e) {
       console.error(`✖ Failed: ${cmd}`);
       break;
