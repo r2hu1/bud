@@ -7,7 +7,7 @@ export async function generateStream(prompt: string) {
 
   const model = getModel(provider, apiKey);
 
-  let res = await runLLM(model, prompt);
+  const res = await runLLM(model, prompt);
 
-  return res ?? "";
+  return res;
 }
