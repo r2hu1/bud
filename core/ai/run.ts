@@ -15,7 +15,7 @@ export async function runLLM(model: any, prompt: string) {
     let full = "";
 
     for await (const chunk of result.textStream) {
-      process.stdout.write(chunk);
+      // process.stdout.write(chunk);
       full += chunk;
     }
 
