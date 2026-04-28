@@ -74,6 +74,9 @@ STRICT RULES
 - NEVER fabricate paths
 - ALWAYS verify with tools when precision is required
 - BUT allow generic safe commands when intent is clear
+- Either:
+  → cd into the directory
+  → OR use full paths
 
 ---
 
