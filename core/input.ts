@@ -9,3 +9,26 @@ export function getInput() {
 
   return input;
 }
+
+export function parseCommands(output: string): string[] {
+  if (!output) return [];
+
+  const match = output.match(/\[[\s\S]*\]/);
+
+  if (match) {
+    try {
+      const parsed = JSON.parse(match[0]);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((c) => typeof c === "string");
+      }
+    } catch {}
+  }
+
+  return [];
+}
+
+export function normalizeCommands(cmds: string[]) {
+  if (!Array.isArray(cmds)) return [];
+
+  return cmds.map((cmd) => cmd.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, ""));
+}
