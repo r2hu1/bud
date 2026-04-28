@@ -31,7 +31,10 @@ program.action(async (input: string[]) => {
   }
 
   const res = await generateStream(SYSTEM_PROMPT + text);
-  if (!res) {
+  const parsed = parseCommands(res ?? "");
+  const normalized = normalizeCommands(parsed);
+  const content = normalized.join("\n");
+  if (!content) {
     return console.log(
       boxen("\nNo commands generated.\nTry being more specific.", {
         padding: 1,
@@ -40,10 +43,7 @@ program.action(async (input: string[]) => {
       }),
     );
   }
-  const parsed = parseCommands(res ?? "");
-  const normalized = normalizeCommands(parsed);
 
-  const content = normalized.join("\n");
   console.log(
     boxen(content, {
       padding: 1,
