@@ -1,0 +1,65 @@
+import { existsSync, mkdirSync, writeFileSync, rmSync } from "fs";
+import { homedir } from "os";
+import { select, password, confirm } from "@inquirer/prompts";
+
+const configDir = `${homedir()}/.bud`;
+const configPath = `${configDir}/config.json`;
+
+export async function setup() {
+  try {
+    const provider = await select({
+      message: "Select provider",
+      choices: [
+        { name: "OpenAI", value: "openai" },
+        { name: "Anthropic", value: "anthropic" },
+        { name: "Gemini", value: "gemini" },
+        { name: "OpenRouter", value: "openrouter" },
+        { name: "Groq", value: "groq" },
+        { name: "Mistral", value: "mistral" },
+      ],
+    });
+
+    const apiKey = await password({
+      message: "Enter API Key",
+      mask: "*",
+      validate: (v) => (v && v.length > 10 ? true : "Invalid API key"),
+    });
+
+    if (existsSync(configPath)) {
+      const overwrite = await confirm({
+        message: "Config already exists. Overwrite?",
+      });
+
+      if (!overwrite) {
+        console.log("Cancelled");
+        return;
+      }
+    }
+
+    if (!existsSync(configDir)) {
+      mkdirSync(configDir, { recursive: true });
+    }
+
+    writeFileSync(configPath, JSON.stringify({ provider, apiKey }, null, 2));
+
+    console.log("✔ Setup complete");
+  } catch (e) {
+    console.error("Setup failed");
+    process.exit(1);
+  }
+}
+
+export function reset() {
+  try {
+    if (!existsSync(configPath)) {
+      console.log("No config found");
+      return;
+    }
+
+    rmSync(configPath);
+    console.log("✔ Config removed");
+  } catch {
+    console.error("Reset failed");
+    process.exit(1);
+  }
+}
