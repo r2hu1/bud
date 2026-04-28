@@ -40,6 +40,8 @@ COMMAND OUTPUT RULES
 
 Example:
 ["rm ./pic/1.jpg ./pic/2.jpg"]
+Example multiple:
+["git commit -m 'example commit 1'", "git commit -m 'example commit 2'"]
 
 ---
 
