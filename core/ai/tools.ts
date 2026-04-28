@@ -55,41 +55,6 @@ export const tools = {
     },
   }),
 
-  writeFile: tool({
-    description: "Write content to file",
-    inputSchema: z.object({
-      path: z.string(),
-      content: z.string(),
-    }),
-    execute: async ({ path: p, content }) => {
-      writeFileSync(p, content);
-      return "ok";
-    },
-  }),
-
-  deleteFile: tool({
-    description: "Delete a file",
-    inputSchema: z.object({
-      path: z.string(),
-    }),
-    execute: async ({ path: p }) => {
-      if (existsSync(p)) rmSync(p);
-      return "ok";
-    },
-  }),
-
-  moveFile: tool({
-    description: "Move or rename a file",
-    inputSchema: z.object({
-      from: z.string(),
-      to: z.string(),
-    }),
-    execute: async ({ from, to }) => {
-      renameSync(from, to);
-      return "ok";
-    },
-  }),
-
   runCommand: tool({
     description: "Execute shell command",
     inputSchema: z.object({
@@ -133,18 +98,6 @@ export const tools = {
       } catch {
         return "";
       }
-    },
-  }),
-
-  gitCommit: tool({
-    description: "Commit changes",
-    inputSchema: z.object({
-      message: z.string(),
-    }),
-    execute: async ({ message }) => {
-      execSync("git add .");
-      execSync(`git commit -m "${message}"`);
-      return "ok";
     },
   }),
 
