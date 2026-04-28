@@ -2,7 +2,7 @@
 
 An AI-powered CLI planner that converts natural language tasks into executable shell commands. Describe what you want to do in plain English, and bud will inspect your system, generate the appropriate commands, and ask for confirmation before executing them.
 
-![Demo](./assets/demo.gif)
+![Demo](./assets/preview.gif)
 
 ## Features
 
