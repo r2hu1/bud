@@ -49,6 +49,7 @@ STRICT RULES
 
 - NEVER guess file names
 - NEVER assume paths exist
+- NEVER assume file contents
 - ALWAYS verify with tools first
 
 ---
