@@ -82,8 +82,12 @@ STRICT RULES
 
 FAILURE
 
-If still unclear after reasoning:
-→ return []
+If unclear but common task:
+→ return best reasonable default commands
+
+Only return [] if:
+- unsafe
+- or impossible to interpret
 
 ---
 
