@@ -13,14 +13,14 @@ An AI-powered CLI planner that converts natural language tasks into executable s
 
 ## Supported AI Providers
 
-| Provider | Model |
-|----------|-------|
-| OpenAI | gpt-4o-mini |
-| Anthropic | claude-3-haiku-20240307 |
-| Google Gemini | gemini-1.5-flash |
-| Groq | openai/gpt-oss-20b |
-| Mistral | mistral-small-latest |
-| OpenRouter | openai/gpt-4o-mini |
+| Provider      | Model                   |
+| ------------- | ----------------------- |
+| OpenAI        | gpt-4o-mini             |
+| Anthropic     | claude-3-haiku-20240307 |
+| Google Gemini | gemini-1.5-flash        |
+| Groq          | openai/gpt-oss-20b      |
+| Mistral       | mistral-small-latest    |
+| OpenRouter    | openai/gpt-4o-mini      |
 
 ## Prerequisites
 
@@ -28,6 +28,8 @@ An AI-powered CLI planner that converts natural language tasks into executable s
 - API key for your chosen AI provider
 
 ## Installation
+
+### From Source
 
 Clone the repository and install dependencies:
 
@@ -37,15 +39,43 @@ cd bud
 bun install
 ```
 
+### Quick Install (macOS / Linux)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/r2hu1/bud/main/scripts/install.sh | bash
+```
+
+Or download and run manually:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/r2hu1/bud/main/scripts/install.sh -o install.sh
+chmod +x install.sh
+./install.sh
+```
+
+This script detects your OS and architecture, downloads the latest release binary, and installs it to `/usr/local/bin` or `~/.local/bin`.
+
+### Quick Install (Windows)
+
+Download and run in PowerShell:
+
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/r2hu1/bud/main/scripts/install.ps1 -OutFile install.ps1
+.\install.ps1
+```
+
+The binary is installed to `%USERPROFILE%\.local\bin` and added to your user PATH automatically.
+
 ## Configuration
 
 Run the interactive setup to configure your AI provider and API key:
 
 ```bash
-bun run index.ts setup
+bud setup
 ```
 
 This will:
+
 1. Prompt you to select an AI provider
 2. Ask for your API key (input is masked)
 3. Save the configuration to `~/.bud/config.json`
@@ -53,7 +83,7 @@ This will:
 To reset your configuration:
 
 ```bash
-bun run index.ts reset
+bud reset
 ```
 
 ## Usage
@@ -61,12 +91,13 @@ bun run index.ts reset
 Pass a natural language description of what you want to do:
 
 ```bash
-bun run index.ts "commit all my changes"
-bun run index.ts "delete all .tmp files in the project"
-bun run index.ts "create a new git branch called feature-xyz"
+bud "commit all my changes"
+bud "delete all .tmp files in the project"
+bud "create a new git branch called feature-xyz"
 ```
 
 The workflow:
+
 1. bud sends your request to the AI along with system context (files, git status, etc.)
 2. The AI inspects your system using built-in tools
 3. A list of shell commands is generated and displayed in a box
@@ -78,6 +109,7 @@ The workflow:
 ### System Prompt & Workflow
 
 bud uses a strict system prompt that forces the AI to:
+
 - Never assume file names or paths exist
 - Always inspect the system first using tools
 - Return commands as a JSON array only (no explanations or markdown)
@@ -87,17 +119,17 @@ bud uses a strict system prompt that forces the AI to:
 
 The AI has access to these tools for system inspection:
 
-| Tool | Description |
-|------|-------------|
-| `cwd` | Get current working directory |
-| `env` | List environment variable names |
-| `os` | Get OS platform and architecture |
-| `listFiles` | List files in a directory |
-| `readFile` | Read file content (first 3000 chars) |
-| `runCommand` | Execute a shell command (with safety blocks) |
-| `gitStatus` | Get git status (short format) |
-| `gitDiff` | Get git diff |
-| `searchFiles` | Search for text across files using grep |
+| Tool          | Description                                  |
+| ------------- | -------------------------------------------- |
+| `cwd`         | Get current working directory                |
+| `env`         | List environment variable names              |
+| `os`          | Get OS platform and architecture             |
+| `listFiles`   | List files in a directory                    |
+| `readFile`    | Read file content (first 3000 chars)         |
+| `runCommand`  | Execute a shell command (with safety blocks) |
+| `gitStatus`   | Get git status (short format)                |
+| `gitDiff`     | Get git diff                                 |
+| `searchFiles` | Search for text across files using grep      |
 
 ### Safety
 
@@ -128,6 +160,7 @@ bud/
 ## Development
 
 The project uses:
+
 - **Runtime**: [Bun](https://bun.sh) — fast all-in-one JavaScript runtime
 - **Language**: TypeScript with strict mode
 - **AI SDK**: [Vercel AI SDK](https://sdk.vercel.ai) with multiple provider adapters
@@ -148,7 +181,7 @@ Contributions are welcome! Here's how to get started:
 
 ### Ideas for Contributions
 
-- Add more AI tools (e.g., `createFile`, `renameFile`, `mkdir`)
+- Add more AI tools (e.g., `readFileAtLine`)
 - Support more AI providers
 - Add command history / logging
 - Add a `--dry-run` flag to skip confirmation
@@ -158,4 +191,4 @@ Contributions are welcome! Here's how to get started:
 
 ## License
 
-MIT (or add your preferred license)
+MIT
