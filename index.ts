@@ -2,12 +2,10 @@
 
 import { Command } from "commander";
 import { setup, reset } from "./core/cli/setup";
-import { SYSTEM_PROMPT } from "./core/ai/system-prompt";
 import { generateStream } from "./core/ai/stream";
 import { normalizeCommands, parseCommands } from "./core/input";
 import { confirm } from "@inquirer/prompts";
 import boxen from "boxen";
-import { $ } from "bun";
 import { runCMD } from "./core/cli/run";
 
 const program = new Command();
@@ -30,7 +28,7 @@ program.action(async (input: string[]) => {
     return;
   }
 
-  const res = await generateStream(SYSTEM_PROMPT + text);
+  const res = await generateStream(text);
   const parsed = parseCommands(res ?? "");
   const normalized = normalizeCommands(parsed);
   const content = normalized.join("\n");
