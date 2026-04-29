@@ -4,7 +4,7 @@ import { Command } from "commander";
 import { setup, reset } from "./core/cli/setup";
 import { generateStream } from "./core/ai/stream";
 import { normalizeCommands, parseCommands } from "./core/input";
-import { confirm } from "@inquirer/prompts";
+import { confirm, select } from "@inquirer/prompts";
 import boxen from "boxen";
 import { runCMD } from "./core/cli/run";
 
@@ -49,7 +49,13 @@ program.action(async (input: string[]) => {
       borderColor: "cyan",
     }),
   );
-  const ok = await confirm({ message: "Execute these commands?" });
+  const ok = await select({
+    message: "Execute these commands?",
+    choices: [
+      { name: "Yes", value: true },
+      { name: "No", value: false },
+    ],
+  });
   if (!ok) {
     process.stdout.write("");
     return process.exit(0);
