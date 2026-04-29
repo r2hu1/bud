@@ -9,7 +9,7 @@ export async function runLLM(model: any, prompt: string) {
       system: SYSTEM_PROMPT,
       prompt,
       tools: tools,
-      stopWhen: stepCountIs(5),
+      stopWhen: stepCountIs(20),
     });
 
     let full = "";
