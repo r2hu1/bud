@@ -69,6 +69,7 @@ export async function fetchModels(
   });
 
   if (!res.ok) {
+    console.log(`[${provider}] Failed: ${res.status} ${res.statusText}`);
     throw new Error(`[${provider}] Failed: ${res.status} ${res.statusText}`);
   }
 
