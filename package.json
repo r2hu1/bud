@@ -1,8 +1,23 @@
 {
   "name": "bud",
+  "version": "2.0.0",
   "module": "index.ts",
-  "type": "module",
+  "scripts": {
+    "build:npm": "bun build index.ts --outfile dist/index.js --target bun"
+  },
   "private": true,
+  "description": "An AI-powered CLI planner that converts natural language tasks into executable shell commands. Describe what you want to do in plain English, and bud will inspect your system, generate the appropriate commands, and ask for confirmation before executing them.",
+  "author": {
+    "name": "r2hu1",
+    "url": "https://github.com/r2hu1"
+  },
+  "bin": {
+    "bud": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
   "devDependencies": {
     "@types/bun": "latest"
   },
