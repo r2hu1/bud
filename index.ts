@@ -94,7 +94,7 @@ program.action(async (input: string[]) => {
     choices: [
       { name: "Yes", value: 1 },
       { name: "No", value: 0 },
-      { name: "Modify commands", value: 2 },
+      { name: "Modify", value: 2 },
     ],
   });
   if (ok !== 1 && ok !== 2) {
