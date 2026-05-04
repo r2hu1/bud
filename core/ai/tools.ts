@@ -1,18 +1,13 @@
 import { tool } from "ai";
 import { z } from "zod";
-import {
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-  existsSync,
-  statSync,
-  mkdirSync,
-} from "fs";
+import { readdirSync, readFileSync, existsSync, statSync } from "fs";
 import { cwd, env } from "process";
 import path from "path";
 import { execSync } from "child_process";
 import os from "os";
 import * as cheerio from "cheerio";
+import { withSpinner } from "../cli/ora";
+import ora from "ora";
 
 function resolvePath(p?: string) {
   if (!p) return cwd();
@@ -167,66 +162,60 @@ export const tools = {
   cwd: tool({
     description: "Get current working directory",
     inputSchema: z.object({}),
-    execute: async () => cwd(),
+    execute: async () => withSpinner("cwd", async () => cwd()),
   }),
 
   os: tool({
     description: "Get OS platform and architecture",
     inputSchema: z.object({}),
-    execute: async () => ({
-      platform: os.platform(),
-      arch: os.arch(),
-    }),
+    execute: async () =>
+      withSpinner("os", async () => ({
+        platform: os.platform(),
+        arch: os.arch(),
+      })),
   }),
 
   env: tool({
     description: "List environment variable names",
     inputSchema: z.object({}),
-    execute: async () => Object.keys(env),
+    execute: async () => withSpinner("env", async () => Object.keys(env)),
   }),
 
   listFiles: tool({
     description: "List files in a directory with metadata",
-    inputSchema: z.object({
-      path: z.string().optional(),
-    }),
-    execute: async ({ path: p }) => {
-      const dir = resolvePath(p);
-
-      return readdirSync(dir).map((name) => {
-        const full = path.join(dir, name);
-        const stat = statSync(full);
-
-        return {
-          name,
-          path: full,
-          type: stat.isDirectory() ? "dir" : "file",
-          ext: path.extname(name),
-          size: stat.size,
-        };
-      });
-    },
+    inputSchema: z.object({ path: z.string().optional() }),
+    execute: async ({ path: p }) =>
+      withSpinner("listFiles", async () => {
+        const dir = resolvePath(p);
+        return readdirSync(dir).map((name) => {
+          const full = path.join(dir, name);
+          const stat = statSync(full);
+          return {
+            name,
+            path: full,
+            type: stat.isDirectory() ? "dir" : "file",
+            ext: path.extname(name),
+            size: stat.size,
+          };
+        });
+      }),
   }),
 
   readFile: tool({
     description: "Read file content (first 3000 chars)",
-    inputSchema: z.object({
-      path: z.string(),
-    }),
-    execute: async ({ path: p }) => {
-      const full = resolvePath(p);
-      return readFileSync(full, "utf-8").slice(0, 3000);
-    },
+    inputSchema: z.object({ path: z.string() }),
+    execute: async ({ path: p }) =>
+      withSpinner("readFile", async () => {
+        const full = resolvePath(p);
+        return readFileSync(full, "utf-8").slice(0, 3000);
+      }),
   }),
 
   fileExists: tool({
     description: "Check if a file or directory exists",
-    inputSchema: z.object({
-      path: z.string(),
-    }),
-    execute: async ({ path: p }) => {
-      return existsSync(resolvePath(p));
-    },
+    inputSchema: z.object({ path: z.string() }),
+    execute: async ({ path: p }) =>
+      withSpinner("fileExists", async () => existsSync(resolvePath(p))),
   }),
 
   readFileLines: tool({
@@ -236,45 +225,44 @@ export const tools = {
       start: z.number().min(1).optional(),
       end: z.number().min(1).optional(),
     }),
-    execute: async ({ path: p, start = 1, end }) => {
-      try {
-        const full = resolvePath(p);
-        const content = readFileSync(full, "utf-8");
-
-        const lines = content.split("\n");
-
-        const s = Math.max(start - 1, 0);
-        const e = end ? Math.min(end, lines.length) : s + 50;
-
-        return lines.slice(s, e).join("\n");
-      } catch {
-        return "";
-      }
-    },
+    execute: async ({ path: p, start = 1, end }) =>
+      withSpinner("readFileLines", async () => {
+        try {
+          const full = resolvePath(p);
+          const lines = readFileSync(full, "utf-8").split("\n");
+          const s = Math.max(start - 1, 0);
+          const e = end ? Math.min(end, lines.length) : s + 50;
+          return lines.slice(s, e).join("\n");
+        } catch {
+          return "";
+        }
+      }),
   }),
 
   gitStatus: tool({
     description: "Get git status (short)",
     inputSchema: z.object({}),
-    execute: async () => {
-      try {
-        return execSync("git status --short", { encoding: "utf-8" });
-      } catch {
-        return "";
-      }
-    },
+    execute: async () =>
+      withSpinner("gitStatus", async () => {
+        try {
+          return execSync("git status --short", { encoding: "utf-8" });
+        } catch {
+          return "";
+        }
+      }),
   }),
 
   gitDiff: tool({
     description: "Get git diff",
     inputSchema: z.object({}),
-    execute: async () => {
-      try {
-        return execSync("git diff", { encoding: "utf-8" });
-      } catch {
-        return "";
-      }
-    },
+    execute: async () =>
+      withSpinner("gitDiff", async () => {
+        try {
+          return execSync("git diff", { encoding: "utf-8" });
+        } catch {
+          return "";
+        }
+      }),
   }),
 
   searchFiles: tool({
@@ -283,42 +271,27 @@ export const tools = {
       query: z.string(),
       path: z.string().optional(),
     }),
-    execute: async ({ query, path: p }) => {
-      try {
-        const dir = resolvePath(p);
-        return execSync(`grep -r "${query}" "${dir}"`, {
-          encoding: "utf-8",
-        }).slice(0, 3000);
-      } catch {
-        return "";
-      }
-    },
+    execute: async ({ query, path: p }) =>
+      withSpinner("searchFiles", async () => {
+        try {
+          const dir = resolvePath(p);
+          return execSync(`grep -r "${query}" "${dir}"`, {
+            encoding: "utf-8",
+          }).slice(0, 3000);
+        } catch {
+          return "";
+        }
+      }),
   }),
+
   webSearch: tool({
     description:
-      "Search the web for a query (e.g. 'how to install react', 'what is the useEffect hook') and return titles, URLs, snippets, and optionally the full text of the top results. Use this whenever the user asks something that requires live web knowledge.",
+      "Search the web and return titles, URLs, snippets, and optionally full page text.",
     inputSchema: z.object({
-      query: z.string().describe("Natural language search query"),
-      maxResults: z
-        .number()
-        .min(1)
-        .max(10)
-        .optional()
-        .describe("Number of search results to return (default 5)"),
-      fetchContent: z
-        .boolean()
-        .optional()
-        .describe(
-          "Whether to also fetch and parse the full page text for each result (default true)",
-        ),
-      maxCharsPerPage: z
-        .number()
-        .min(500)
-        .max(15000)
-        .optional()
-        .describe(
-          "Max characters to extract per page when fetchContent is true (default 4000)",
-        ),
+      query: z.string(),
+      maxResults: z.number().min(1).max(10).optional(),
+      fetchContent: z.boolean().optional(),
+      maxCharsPerPage: z.number().min(500).max(15000).optional(),
     }),
     execute: async ({
       query,
@@ -326,24 +299,36 @@ export const tools = {
       fetchContent = true,
       maxCharsPerPage = 4000,
     }) => {
+      const spinner = ora({
+        text: `Searching: "${query}"`,
+        color: "cyan",
+        spinner: "dots2",
+      }).start();
+
       let results: { title: string; url: string; snippet: string }[];
       try {
         results = await searchDuckDuckGo(query, maxResults);
+        spinner.text = `Found ${results.length} results${fetchContent ? ", fetching pages..." : ""}`;
       } catch (err) {
+        spinner.fail("Web search failed");
         return {
           error: `Search engine error: ${err instanceof Error ? err.message : String(err)}`,
         };
       }
 
-      if (!fetchContent) return { query, results };
+      if (!fetchContent) {
+        spinner.succeed(`Found ${results.length} results`);
+        return { query, results };
+      }
 
       const chunks: (typeof results)[] = [];
       for (let i = 0; i < results.length; i += 3)
         chunks.push(results.slice(i, i + 3));
 
       const enriched = [];
+      let fetched = 0;
       for (const chunk of chunks) {
-        const fetched = await Promise.all(
+        const batch = await Promise.all(
           chunk.map(async (r) => {
             try {
               const page = await fetchAndParse(r.url, maxCharsPerPage);
@@ -356,31 +341,33 @@ export const tools = {
             }
           }),
         );
-        enriched.push(...fetched);
+        fetched += batch.length;
+        spinner.text = `Fetching pages... (${fetched}/${results.length})`;
+        enriched.push(...batch);
       }
-      // console.log(query, enriched.length, enriched);
+
+      spinner.succeed(`Fetched ${enriched.length}/${results.length} pages`);
       return { query, totalResults: enriched.length, results: enriched };
     },
   }),
 
   fetchWebPage: tool({
     description:
-      "Fetch and parse a specific URL, returning clean readable text stripped of HTML, scripts, and nav/footer noise. Use when you already have a URL and want its content.",
+      "Fetch and parse a specific URL, returning clean readable text.",
     inputSchema: z.object({
-      url: z.string().url(),
-      maxChars: z
-        .number()
-        .min(100)
-        .max(20000)
-        .optional()
-        .describe("Max characters to return (default 5000)"),
+      url: z.url(),
+      maxChars: z.number().min(100).max(20000).optional(),
     }),
-    execute: async ({ url, maxChars = 5000 }) => {
-      try {
-        return await fetchAndParse(url, maxChars);
-      } catch (err) {
-        return { url, error: err instanceof Error ? err.message : String(err) };
-      }
-    },
+    execute: async ({ url, maxChars = 5000 }) =>
+      withSpinner("fetchWebPage", async () => {
+        try {
+          return await fetchAndParse(url, maxChars);
+        } catch (err) {
+          return {
+            url,
+            error: err instanceof Error ? err.message : String(err),
+          };
+        }
+      }),
   }),
 };
