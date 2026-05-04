@@ -10,7 +10,6 @@ import { runCMD } from "./core/cli/run";
 import { changeModel } from "./core/cli/config";
 import chalk from "chalk";
 import readline from "readline";
-import ora from "ora";
 
 const program = new Command();
 
